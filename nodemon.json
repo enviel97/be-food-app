@@ -1,0 +1,15 @@
+{
+	"restartable": "rs",
+	"ignore": [".git", "node_modules/", "dist/", "coverage/"],
+	"watch": ["src/"],
+	"execMap": {
+		"build": "rm -rf dist/ && tsc",
+		"start": "node build/app.js",
+		"dev": "node -r ts-node/register"
+	},
+	"env": {
+		"NODE_ENV": "dev"
+	},
+	"ext": "js,json,ts",
+	"exec": "ts-node ./main.ts"
+}
