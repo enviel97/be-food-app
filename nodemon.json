@@ -11,5 +11,5 @@
 		"NODE_ENV": "dev"
 	},
 	"ext": "js,json,ts",
-	"exec": "ts-node ./main.ts"
+	"exec": "ts-node ./src/app.ts"
 }
