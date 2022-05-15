@@ -23,20 +23,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserGender = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-var UserGender;
-(function (UserGender) {
-    UserGender["male"] = "Male";
-    UserGender["female"] = "Female";
-    UserGender["private"] = "Private";
-})(UserGender = exports.UserGender || (exports.UserGender = {}));
-const UserSchema = new mongoose_1.Schema({
-    name: { type: String, required: true },
-    avatar: { type: String, default: '' },
-    email: { type: String, required: true, immutable: true },
-    password: { type: String, required: true, select: false, immutable: true },
-    gender: { type: String, enum: UserGender, default: 1 },
-    birth: { type: Date, required: true }
+const yup_1 = require("yup");
+const commentSchema = new mongoose_1.Schema({
+    user: { type: String, required: true, ref: 'Food' },
+    comment: { type: String, required: true },
+    dataPost: { type: Date, default: Date() },
+    stars: { type: yup_1.number, max: 5, min: 0 }
 }, { timestamps: true });
-exports.default = mongoose_1.default.model('User', UserSchema);
+exports.default = mongoose_1.default.model('Comment', commentSchema);

@@ -23,20 +23,22 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserGender = void 0;
+exports.FoodStatus = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-var UserGender;
-(function (UserGender) {
-    UserGender["male"] = "Male";
-    UserGender["female"] = "Female";
-    UserGender["private"] = "Private";
-})(UserGender = exports.UserGender || (exports.UserGender = {}));
-const UserSchema = new mongoose_1.Schema({
+var FoodStatus;
+(function (FoodStatus) {
+    FoodStatus["empty"] = "empty";
+    FoodStatus["normal"] = "normal";
+    FoodStatus["little"] = "little";
+})(FoodStatus = exports.FoodStatus || (exports.FoodStatus = {}));
+const foodSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
-    avatar: { type: String, default: '' },
-    email: { type: String, required: true, immutable: true },
-    password: { type: String, required: true, select: false, immutable: true },
-    gender: { type: String, enum: UserGender, default: 1 },
-    birth: { type: Date, required: true }
+    imgs: { type: [String], required: true, default: [] },
+    comments: { type: [String], default: [], ref: 'Comment' },
+    timePrepare: { type: Number, default: 15, min: 0 },
+    finalRate: { type: Number, default: 0.0 },
+    status: { type: String, enum: FoodStatus, default: FoodStatus.normal },
+    description: { type: String, required: true },
+    price: { type: Number, default: 0.0 }
 }, { timestamps: true });
-exports.default = mongoose_1.default.model('User', UserSchema);
+exports.default = mongoose_1.default.model('Food', foodSchema);
