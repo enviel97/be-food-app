@@ -8,6 +8,7 @@ const http_1 = __importDefault(require("http"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const config_1 = require("./config/config");
 const logger_1 = __importDefault(require("./library/logger"));
+const routes_1 = __importDefault(require("./routes"));
 const router = (0, express_1.default)();
 mongoose_1.default
     .connect(config_1.config.mongo.url, { retryWrites: true, w: 'majority' })
@@ -24,7 +25,7 @@ const startServer = () => {
         const { method, url, socket } = req;
         logger_1.default.log(`Incomming - Method: [${method}] - Url: [${url}] - IP: [${socket.remoteAddress}]`);
         res.on('finish', () => {
-            logger_1.default.log(`Incomming - Method: [${method}] - Url: [${url}] - IP: [${socket.remoteAddress}] - StatusCode: [${res.statusCode}]`);
+            logger_1.default.log(`Outcomming - Method: [${method}] - Url: [${url}] - IP: [${socket.remoteAddress}] - StatusCode: [${res.statusCode}]`);
         });
         next();
     });
@@ -38,6 +39,10 @@ const startServer = () => {
             return res.status(200).json({});
         }
         next();
+    });
+    routes_1.default.forEach((injectValue) => {
+        logger_1.default.success(`Inject ${injectValue.name}`);
+        router.use(injectValue.name, injectValue.router);
     });
     router.get('/ping', (_, res, __) => res.status(200).json({ message: 'ping' }));
     router.use((_, res, __) => {
