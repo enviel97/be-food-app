@@ -26,7 +26,7 @@ const UserSchema: Schema = new Schema(
 		gender: { type: String, enum: UserGender, default: 1 },
 		birth: { type: Date, required: true }
 	},
-	{ versionKey: false, timestamps: true }
+	{ timestamps: true }
 );
 
 export default mongoose.model<IUserModel>('User', UserSchema);
