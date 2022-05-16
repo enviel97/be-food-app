@@ -4,7 +4,7 @@
 	"description": "Backend for food economic ",
 	"main": "src/app.ts",
 	"scripts": {
-		"data": "ts-node ./data/injects.ts",
+		"data": "nodemon -w \"./data/*\" --ext \"ts,json\" --exec \"ts-node ./data/injects.ts\"",
 		"start": "ts-node ./src/app.ts",
 		"test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'test/**/*.ts'",
 		"build": "tsc",
