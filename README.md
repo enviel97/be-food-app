@@ -23,6 +23,22 @@ Using data, some collected from Yummy website by collecting on the internet, som
 
 --- This will update late ---
 
+## Route:
+
+### base url: https://be-food-app.heroku.com
+
+### food: 
+- [GET] /food/get/popular  get popular food by rating star on food
+- [GET] /food/get/common: get common food by comment of food
+- [GET] /food/get?limit=&offset=: get food list with pagination
+- [GET] /food/get/idFood: get food detail
+
+### user: 
+- [GET] /user/get/:userId  get uesr by id
+- [PATCH] /user/update/:userId: update infomation in account by id
+- [POST] /user/create: sign up account
+- [POST] /user/signin: login 
+
 ## Run:
 npm i
 npm start
