@@ -4,12 +4,12 @@ Backend for food economic. This application allows to create users, accept users
 ## Enviroment
 
 ### Development framework
-Typescript: v4.2.3
-Node: v14.16.0
-Express: v4.18.1
+- Typescript: v4.2.3
+- Node: v14.16.0
+- Express: v4.18.1
 
 ### Database 
-Mongoose: 4.18.1
+- Mongoose: 4.18.1
 
 ## Data
 Using data, some collected from Yummy website by collecting on the internet, some created by faker library. Main purpose is used to improve my development and coding skills, not for commercial purposes.  
@@ -40,5 +40,5 @@ Using data, some collected from Yummy website by collecting on the internet, som
 - [POST] /user/signin: login 
 
 ## Run:
-npm i
-npm start
+- npm i
+- npm start
