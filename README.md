@@ -15,12 +15,13 @@ Mongoose: 4.18.1
 Using data, some collected from Yummy website by collecting on the internet, some created by faker library. Main purpose is used to improve my development and coding skills, not for commercial purposes.  
 
 ## Backlog
-auth                ✅
-user                ✅
-food                ✅
-payment             
-history             
--- This will update late ---
+- auth                ✅
+- user                ✅
+- food                ✅
+- payment             
+- history             
+
+--- This will update late ---
 
 ## Run:
 npm i
