@@ -6,6 +6,7 @@
 	"scripts": {
 		"data": "ts-node ./data/injects.ts",
 		"start": "ts-node ./src/app.ts",
+		"heroku": "node ./dist/app.js",
 		"test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'test/**/*.ts'",
 		"build": "tsc",
 		"dev": "nodemon"
