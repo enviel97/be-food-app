@@ -8,36 +8,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const logger_helper_1 = require("../../config/logger_helper");
-const user_model_1 = __importDefault(require("../../models/user.model"));
+const models_1 = require("../../models");
 const authProvider = {
     findById: (id) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const user = yield user_model_1.default.findById(id);
+            const user = yield models_1.UserModel.findById(id);
             return user;
         }
         catch (error) {
             throw (0, logger_helper_1.logError)({ message: 'Get user error', error });
         }
     }),
-    findAll: (offset, limit) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            const [users, total] = yield Promise.all([
-                user_model_1.default.find().skip(offset).limit(limit).lean(),
-                user_model_1.default.count()
-            ]);
-            return { limit, offset, total, datas: users };
-        }
-        catch (error) {
-            throw (0, logger_helper_1.logError)({ message: 'Get users error', error });
-        }
-    }),
     create: (user) => __awaiter(void 0, void 0, void 0, function* () {
-        const _user = new user_model_1.default(Object.assign({}, user));
+        const _user = new models_1.UserModel(Object.assign({}, user));
         try {
             const user_1 = yield _user.save();
             return user_1;
@@ -48,7 +33,7 @@ const authProvider = {
     }),
     updateById: (id, newObject) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const user = yield user_model_1.default.findByIdAndUpdate(id, newObject, {
+            const user = yield models_1.UserModel.findByIdAndUpdate(id, newObject, {
                 new: true
             });
             return user;
@@ -59,7 +44,7 @@ const authProvider = {
     }),
     deleteById: (id) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const user = yield user_model_1.default.findByIdAndDelete(id);
+            const user = yield models_1.UserModel.findByIdAndDelete(id);
             return user;
         }
         catch (error) {

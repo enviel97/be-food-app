@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const food_provider_1 = __importDefault(require("./food.provider"));
 const constant_1 = require("../../helpers/constant");
+const constant_2 = require("../../config/constant");
 const getPopularFood = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const result = yield food_provider_1.default.findByAttribute({}, {
@@ -21,7 +22,7 @@ const getPopularFood = (req, res) => __awaiter(void 0, void 0, void 0, function*
             limit: 10,
             offset: 0
         });
-        return res.status(constant_1.statusCode.success.CREATED).json(result);
+        return res.status(constant_1.statusCode.success.OK).json(result);
     }
     catch (error) {
         return res
@@ -29,10 +30,10 @@ const getPopularFood = (req, res) => __awaiter(void 0, void 0, void 0, function*
             .json(error);
     }
 });
-const getRegulation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getCommon = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const result = yield food_provider_1.default.special1();
-        return res.status(constant_1.statusCode.success.CREATED).json(result);
+        return res.status(constant_1.statusCode.success.OK).json(result);
     }
     catch (error) {
         return res
@@ -57,4 +58,22 @@ const getFood = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             .json(error);
     }
 });
-exports.default = { getPopularFood, getRegulation, getFood };
+const getFoods = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const offset = Number(req.query.offset) || constant_2.DEFAULT.OFFSET;
+        const limit = Number(req.query.limit) || constant_2.DEFAULT.LIMIT;
+        const food = yield food_provider_1.default.findAll(offset, limit);
+        if (!food) {
+            return res
+                .status(constant_1.statusCode.error.NOT_FOUND)
+                .json({ message: 'Not found' });
+        }
+        return res.status(constant_1.statusCode.success.OK).json(food);
+    }
+    catch (error) {
+        return res
+            .status(constant_1.statusCode.server_error.INTERNAL_SERVER_ERROR)
+            .json(error);
+    }
+});
+exports.default = { getPopularFood, getCommon, getFood, getFoods };

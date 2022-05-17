@@ -8,19 +8,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const constant_1 = require("../../config/constant");
 const logger_helper_1 = require("../../config/logger_helper");
-const food_model_1 = __importDefault(require("../../models/food.model"));
+const models_1 = require("../../models");
+let totalItem = -1;
 const foodProvider = {
     findAll: (offset, limit) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const [foods, total] = yield Promise.all([
-                food_model_1.default.find().skip(offset).limit(limit).populate('comments').lean(),
-                food_model_1.default.count()
+                models_1.FoodModel.find().skip(offset).limit(limit).populate('comments').lean(),
+                totalItem < 0 ? models_1.FoodModel.count() : totalItem
             ]);
             return { limit, offset, total, datas: foods };
         }
@@ -34,7 +32,7 @@ const foodProvider = {
             const sort = (_a = options.sort) !== null && _a !== void 0 ? _a : {};
             const offset = (_b = options.offset) !== null && _b !== void 0 ? _b : constant_1.DEFAULT.OFFSET;
             const limit = (_c = options.limit) !== null && _c !== void 0 ? _c : constant_1.DEFAULT.LIMIT;
-            const foods = yield food_model_1.default.find(search)
+            const foods = yield models_1.FoodModel.find(search)
                 .sort(sort)
                 .skip(offset)
                 .limit(limit)
@@ -48,7 +46,14 @@ const foodProvider = {
     }),
     findById: (id) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const user = yield food_model_1.default.findById(id);
+            const user = yield models_1.FoodModel.findById(id)
+                .populate({
+                path: 'comments',
+                populate: {
+                    path: 'user'
+                }
+            })
+                .lean();
             return user;
         }
         catch (error) {
@@ -57,21 +62,31 @@ const foodProvider = {
     }),
     special1: () => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const resultSort = yield food_model_1.default.aggregate([
+            const resultSort = yield models_1.FoodModel.aggregate([
                 { $unwind: '$comments' },
                 {
                     $group: {
                         _id: '$_id',
                         comments: { $push: '$comments' },
-                        size: { $sum: 1 }
+                        totalComment: { $sum: 1 },
+                        name: { $first: '$name' },
+                        imgs: { $first: '$imgs' },
+                        timePrepare: { $first: '$timePrepare' },
+                        finalRate: { $first: '$finalRate' },
+                        status: { $first: '$status' },
+                        description: { $first: '$description' },
+                        price: { $first: '$price' }
                     }
                 },
-                { $sort: { size: 1 } }
-            ]).limit(5);
-            const foods = yield food_model_1.default.populate(resultSort, { path: 'comments' });
+                { $sort: { totalComment: 1 } }
+            ]).limit(6);
+            const foods = yield models_1.FoodModel.populate(resultSort, {
+                path: 'comments',
+                populate: { path: 'user', select: { name: 1, avatar: 1 } }
+            });
             return {
-                total: Math.min(5, foods.length),
-                limit: 5,
+                total: Math.min(6, foods.length),
+                limit: 6,
                 offset: 0,
                 datas: foods
             };

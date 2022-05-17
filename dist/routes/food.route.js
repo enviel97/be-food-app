@@ -6,9 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const food_1 = __importDefault(require("../controllers/food"));
 const router = (0, express_1.Router)();
-router.get('/get/:foodId', food_1.default.getFood);
 router.get('/get/popular', food_1.default.getPopularFood);
-router.get('/get/getRegulation', food_1.default.getRegulation);
+router.get('/get/common', food_1.default.getCommon);
+router.get('/get', food_1.default.getFoods);
+router.get('/get/:foodId', food_1.default.getFood);
 exports.default = {
     name: '/food',
     router

@@ -38,6 +38,10 @@ const startServer = () => {
             res.header('Access-Control-Allow-Methods', 'PUT, POST, DELETE, GET, PATCH');
             return res.status(200).json({});
         }
+        const key = req.headers['authenticate'] || req.query.apiKey;
+        if (!key || key === config_1.config.server.api) {
+            return res.status(401).json({ message: 'Invalid api key' });
+        }
         next();
     });
     routes_1.default.forEach((injectValue) => {
