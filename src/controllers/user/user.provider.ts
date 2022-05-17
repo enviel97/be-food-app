@@ -1,11 +1,12 @@
 import { logError } from '../../config/logger_helper';
 import Provider from '../../config/provider';
-import User, { IUser, UserGender } from '../../models/user.model';
+import { UserModel } from '../../models';
+import { IUser, UserGender } from '../../models/users/user.interface';
 
 const authProvider: Provider<IUser> = {
 	findById: async (id: String) => {
 		try {
-			const user = await User.findById(id);
+			const user = await UserModel.findById(id);
 			return user;
 		} catch (error) {
 			throw logError({ message: 'Get user error', error });
@@ -14,8 +15,8 @@ const authProvider: Provider<IUser> = {
 	findAll: async (offset: number, limit: number) => {
 		try {
 			const [users, total] = await Promise.all([
-				User.find().skip(offset).limit(limit).lean(),
-				User.count()
+				UserModel.find().skip(offset).limit(limit).lean(),
+				UserModel.count()
 			]);
 			return { limit, offset, total, datas: users };
 		} catch (error) {
@@ -23,7 +24,7 @@ const authProvider: Provider<IUser> = {
 		}
 	},
 	create: async (user: IUser) => {
-		const _user = new User({ ...user });
+		const _user = new UserModel({ ...user });
 
 		try {
 			const user_1 = await _user.save();
@@ -42,7 +43,7 @@ const authProvider: Provider<IUser> = {
 		}
 	) => {
 		try {
-			const user = await User.findByIdAndUpdate(id, newObject, {
+			const user = await UserModel.findByIdAndUpdate(id, newObject, {
 				new: true
 			});
 			return user;
@@ -52,7 +53,7 @@ const authProvider: Provider<IUser> = {
 	},
 	deleteById: async (id: String) => {
 		try {
-			const user = await User.findByIdAndDelete(id);
+			const user = await UserModel.findByIdAndDelete(id);
 			return user;
 		} catch (error) {
 			throw logError({ message: 'Create user error', error });

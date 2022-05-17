@@ -1,32 +1,5 @@
-/**
- * name;
- * images;
- * comments;
- * finalRate;
- * timePrepare;
- * status;
- * description;
- * price;
- */
-
-import mongoose, { Schema, Types } from 'mongoose';
-
-export enum FoodStatus {
-	empty = 'empty',
-	normal = 'normal',
-	little = 'little'
-}
-
-export interface IFood {
-	name: String;
-	imgs: String[];
-	comments: String[];
-	finalRate: number;
-	timePrepare: number;
-	status: FoodStatus;
-	description: String;
-	price: number;
-}
+import mongoose, { Schema } from 'mongoose';
+import { FoodStatus, IFood } from './food.interface';
 
 export interface IFoodModel extends IFood, Document {}
 

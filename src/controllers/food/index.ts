@@ -1,6 +1,5 @@
 import provider from './food.provider';
 import { Request, Response } from 'express';
-import { IFood } from '../../models/food.model';
 import { statusCode } from '../../helpers/constant';
 
 // Route create User
@@ -22,7 +21,7 @@ const getPopularFood = async (req: Request, res: Response) => {
 	}
 };
 
-const getRegulation = async (req: Request, res: Response) => {
+const getCommon = async (req: Request, res: Response) => {
 	try {
 		const result = await provider.special1();
 		return res.status(statusCode.success.CREATED).json(result);
@@ -50,4 +49,4 @@ const getFood = async (req: Request, res: Response) => {
 	}
 };
 
-export default { getPopularFood, getRegulation, getFood };
+export default { getPopularFood, getCommon, getFood };

@@ -1,21 +1,14 @@
 import mongoose, { Schema } from 'mongoose';
-import { number } from 'yup';
-
-export interface IComment {
-	user: String;
-	comment: String;
-	datePost: Date;
-	stars: number;
-}
+import { IComment } from './comment.interface';
 
 export interface ICommentModel extends IComment, Document {}
 
 const commentSchema = new Schema(
 	{
-		user: { type: String, required: true, ref: 'Food' },
+		user: { type: String, required: true, ref: 'User' },
 		comment: { type: String, required: true },
 		dataPost: { type: Date, default: Date() },
-		stars: { type: number, max: 5, min: 0 }
+		stars: { type: Number, max: 5, min: 0 }
 	},
 	{ timestamps: true }
 );

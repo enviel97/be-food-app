@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+import { SingleBar } from 'cli-progress';
 
 const isString = (args: any) => typeof args === 'string';
 
@@ -21,5 +22,14 @@ export default {
 			`[${new Date().toLocaleString()}]`,
 			chalk.bgYellow.black.bold(` Warning `),
 			isString(args) ? chalk.grey(args) : args
-		)
+		),
+	progress: new SingleBar({
+		format:
+			'CLI Progress |' +
+			chalk.cyan('{bar}') +
+			'| {percentage}% || {value}/{total} Chunks || Speed: {speed}',
+		barCompleteChar: '\u2588',
+		barIncompleteChar: '\u2591',
+		hideCursor: true
+	})
 };

@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
 import { DEFAULT } from '../../config/constant';
 import { statusCode } from '../../helpers/constant';
-import { UserGender, IUser } from '../../models/user.model';
+import { IUser } from '../../models/users/user.interface';
+import { UserGender } from '../../models/users/user.model';
+
 import provider from './user.provider';
 
 // Route create User
