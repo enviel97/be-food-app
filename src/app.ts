@@ -8,7 +8,6 @@ import route from './routes';
 const router = express();
 
 /** Connect to Mongo */
-
 mongoose
 	.connect(config.mongo.url, { retryWrites: true, w: 'majority' })
 	.then(() => {
@@ -60,6 +59,12 @@ const startServer = () => {
 				'PUT, POST, DELETE, GET, PATCH'
 			);
 			return res.status(200).json({});
+		}
+
+		// check api key
+		const key = req.headers['authenticate'] || req.query.apiKey;
+		if (!key || key === config.server.api) {
+			return res.status(401).json({ message: 'Invalid api key' });
 		}
 
 		next();

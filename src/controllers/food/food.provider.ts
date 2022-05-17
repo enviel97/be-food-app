@@ -4,6 +4,7 @@ import Provider, { Pagination } from '../../config/provider';
 import { FoodModel } from '../../models';
 import { IFood } from '../../models/foods/food.interface';
 
+let totalItem = -1;
 const foodProvider: Provider<IFood> & {
 	special1: () => Promise<Pagination<IFood>>;
 } = {
@@ -11,7 +12,7 @@ const foodProvider: Provider<IFood> & {
 		try {
 			const [foods, total] = await Promise.all([
 				FoodModel.find().skip(offset).limit(limit).populate('comments').lean(),
-				FoodModel.count()
+				totalItem < 0 ? FoodModel.count() : totalItem
 			]);
 			return { limit, offset, total, datas: foods };
 		} catch (error) {
@@ -36,7 +37,14 @@ const foodProvider: Provider<IFood> & {
 	},
 	findById: async (id: String) => {
 		try {
-			const user = await FoodModel.findById(id);
+			const user = await FoodModel.findById(id)
+				.populate({
+					path: 'comments',
+					populate: {
+						path: 'user'
+					}
+				})
+				.lean();
 			return user;
 		} catch (error) {
 			throw logError({ message: 'Get food error', error });
@@ -67,8 +75,8 @@ const foodProvider: Provider<IFood> & {
 				populate: { path: 'user', select: { name: 1, avatar: 1 } }
 			});
 			return {
-				total: Math.min(5, foods.length),
-				limit: 5,
+				total: Math.min(6, foods.length),
+				limit: 6,
 				offset: 0,
 				datas: foods
 			};

@@ -12,17 +12,6 @@ const authProvider: Provider<IUser> = {
 			throw logError({ message: 'Get user error', error });
 		}
 	},
-	findAll: async (offset: number, limit: number) => {
-		try {
-			const [users, total] = await Promise.all([
-				UserModel.find().skip(offset).limit(limit).lean(),
-				UserModel.count()
-			]);
-			return { limit, offset, total, datas: users };
-		} catch (error) {
-			throw logError({ message: 'Get users error', error });
-		}
-	},
 	create: async (user: IUser) => {
 		const _user = new UserModel({ ...user });
 

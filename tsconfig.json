@@ -15,5 +15,5 @@
 		"experimentalDecorators": true
 	},
 	"include": ["./src/**/*.ts"],
-	"exclude": ["test", ".vscode", "node_modules", "dist"]
+	"exclude": ["test", ".vscode", "node_modules", "dist", ".env"]
 }

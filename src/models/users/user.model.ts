@@ -1,5 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import { IUser } from './user.interface';
+import bcrypt from '../../helpers/bcrypt';
 
 export enum UserGender {
 	male = 'Male',
@@ -20,5 +21,14 @@ const UserSchema: Schema = new Schema(
 	},
 	{ timestamps: true }
 );
+
+UserSchema.pre('save', async function (next) {
+	let user = this;
+	if (this.isModified('password') || this.isNew) {
+		const hash = await bcrypt.hash(user.password);
+		user.password = hash;
+	}
+	return next();
+});
 
 export default mongoose.model<IUserModel>('User', UserSchema);
