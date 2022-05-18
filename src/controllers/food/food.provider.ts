@@ -68,7 +68,7 @@ const foodProvider: Provider<IFood> & {
 						price: { $first: '$price' }
 					}
 				},
-				{ $sort: { totalComment: 1 } }
+				{ $sort: { totalComment: 1, createAt: -1, name: -1 } }
 			]).limit(6);
 			const foods = await FoodModel.populate(resultSort, {
 				path: 'comments',
