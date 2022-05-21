@@ -45,7 +45,25 @@ const authProvider: Provider<IUser> = {
 			const user = await UserModel.findByIdAndDelete(id);
 			return user;
 		} catch (error) {
-			throw logError({ message: 'Create user error', error });
+			throw logError({ message: 'Delete user error', error });
+		}
+	},
+	findOne: async (search) => {
+		try {
+			const food = await UserModel.findOne(search).lean();
+			return food;
+		} catch (error) {
+			throw logError({ message: 'Get user error', error });
+		}
+	},
+	updateByAttribute: async (search: any, update: any) => {
+		try {
+			const user = await UserModel.findOneAndUpdate(search, update, {
+				new: true
+			}).lean();
+			return user;
+		} catch (error) {
+			throw logError({ message: 'Change password user failure', error });
 		}
 	}
 };

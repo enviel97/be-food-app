@@ -14,8 +14,8 @@ const UserSchema: Schema = new Schema(
 	{
 		name: { type: String, required: true },
 		avatar: { type: String, default: '' },
-		email: { type: String, required: true, immutable: true },
-		password: { type: String, required: true, select: false, immutable: true },
+		email: { type: String, required: true, immutable: true, unique: true },
+		password: { type: String, required: true, select: false },
 		gender: { type: String, enum: UserGender, default: UserGender.female },
 		birth: { type: Date, required: true }
 	},
@@ -31,4 +31,12 @@ UserSchema.pre('save', async function (next) {
 	return next();
 });
 
+UserSchema.pre('findOneAndUpdate', async function (next) {
+	const update = this.getUpdate();
+	const password = (update as any)['password'] ?? undefined;
+	if (!!password) {
+		const hash = await bcrypt.hash(password);
+		this.setUpdate({ password: hash });
+	}
+});
 export default mongoose.model<IUserModel>('User', UserSchema);

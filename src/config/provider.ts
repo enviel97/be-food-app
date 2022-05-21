@@ -17,9 +17,11 @@ export interface Options {
 
 export default interface Provider<T = any> {
 	findById?: (id: String) => Promise<T | null>;
+	findOne?: (search: any) => Promise<T | null>;
 	findByAttribute?: (search: any, options: Options) => Promise<Pagination<T>>;
 	findAll?: (offset: number, limit: number) => Promise<Pagination<T>>;
 	create?: (data: T) => Promise<T>;
 	updateById?: (id: String, data: any) => Promise<T | null>;
+	updateByAttribute?: (search: any, update: any) => Promise<T | null>;
 	deleteById?: (id: String) => Promise<T | null>;
 }

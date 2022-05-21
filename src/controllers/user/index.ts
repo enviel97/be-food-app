@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import bcrypt from '../../helpers/bcrypt';
 import { statusCode } from '../../helpers/constant';
 import { Token } from '../../helpers/token';
+import logger from '../../library/logger';
 import { UserModel } from '../../models';
 import { IUser } from '../../models/users/user.interface';
 import { UserGender } from '../../models/users/user.model';
@@ -10,8 +11,12 @@ import provider from './user.provider';
 
 // Route create User
 const createUser = async (req: Request, res: Response) => {
-	const { name, birth, gender, password, avatar, email } = req.body;
-
+	const { name, birth, gender, password, email } = req.body;
+	let avatar: string = '';
+	if (!!req.file) {
+		const { bucketName, filename } = req.file;
+		avatar = `/${bucketName}/${filename}`;
+	}
 	try {
 		const User: IUser = {
 			name: name,
@@ -19,7 +24,7 @@ const createUser = async (req: Request, res: Response) => {
 			gender: (UserGender as any)[`${gender}`.toLowerCase()],
 			email: email,
 			password: password,
-			avatar: avatar ?? ''
+			avatar: avatar
 		};
 		const result = await provider.create!(User);
 		return res.status(statusCode.success.CREATED).json({
@@ -31,9 +36,10 @@ const createUser = async (req: Request, res: Response) => {
 			avatar: result.avatar
 		});
 	} catch (error) {
+		logger.error(error);
 		return res
 			.status(statusCode.server_error.INTERNAL_SERVER_ERROR)
-			.json(error);
+			.json({ message: 'Server error' });
 	}
 };
 
@@ -48,9 +54,10 @@ const readUser = async (req: Request, res: Response) => {
 				.json({ message: 'Not found' });
 		return res.status(statusCode.success.OK).json(result);
 	} catch (error) {
+		logger.error(error);
 		return res
 			.status(statusCode.server_error.INTERNAL_SERVER_ERROR)
-			.json(error);
+			.json({ message: 'Server error' });
 	}
 };
 
@@ -72,9 +79,10 @@ const updateUser = async (req: Request, res: Response) => {
 
 		return res.status(statusCode.success.OK).json(result);
 	} catch (error) {
+		logger.error(error);
 		return res
 			.status(statusCode.server_error.INTERNAL_SERVER_ERROR)
-			.json(error);
+			.json({ message: 'Server error' });
 	}
 };
 
@@ -89,25 +97,25 @@ const deleteUser = async (req: Request, res: Response) => {
 				.json({ message: 'Not found' });
 		return res.status(statusCode.success.OK).json(result);
 	} catch (error) {
+		logger.error(error);
 		return res
 			.status(statusCode.server_error.INTERNAL_SERVER_ERROR)
-			.json(error);
+			.json({ message: 'Server error' });
 	}
 };
 
-export const signin = async (req: Request, res: Response) => {
+const signin = async (req: Request, res: Response) => {
 	const { email, password } = req.body;
-	const user = await UserModel.findOne<IUser>({ email })
-		.select({
-			id: 1,
-			password: 1,
-			name: 1,
-			email: 1,
-			avatar: 1,
-			gender: 1,
-			birth: 1
-		})
-		.lean();
+	const user = await UserModel.findOne<IUser>({ email }).select({
+		_id: 1,
+		password: 1,
+		name: 1,
+		email: 1,
+		avatar: 1,
+		gender: 1,
+		birth: 1,
+		updatedAt: 1
+	});
 	if (!user) {
 		return res
 			.status(statusCode.error.NOT_FOUND)
@@ -119,11 +127,13 @@ export const signin = async (req: Request, res: Response) => {
 		return res.status(statusCode.success.OK).json({
 			token: token,
 			user: {
+				id: (user as any)['_id'],
 				name: user.name,
 				email: user.email,
 				avatar: user.avatar,
 				gender: user.gender,
-				birth: user.birth
+				birth: user.birth,
+				updatedAt: (user as any)['updatedAt']
 			}
 		});
 	}
@@ -132,10 +142,52 @@ export const signin = async (req: Request, res: Response) => {
 		.json({ message: 'Invalid username or password' });
 };
 
+const verify = async (req: Request, res: Response) => {
+	const { email } = req.body;
+	try {
+		const result = await provider.findOne!({ email });
+		if (!result) {
+			return res
+				.status(statusCode.success.OK)
+				.json({ status: false, message: `${email} not found` });
+		}
+		return res
+			.status(statusCode.success.OK)
+			.json({ status: true, message: `${email} found` });
+	} catch (error) {
+		logger.error(error);
+		return res
+			.status(statusCode.server_error.INTERNAL_SERVER_ERROR)
+			.json({ message: 'Server error' });
+	}
+};
+
+const changePassword = async (req: Request, res: Response) => {
+	const { email, password } = req.body;
+	try {
+		const result = await provider.updateByAttribute!({ email }, { password });
+		if (!result) {
+			return res
+				.status(statusCode.success.OK)
+				.json({ status: false, message: `${email} not found` });
+		}
+		return res
+			.status(statusCode.success.OK)
+			.json({ status: true, message: `${email} found` });
+	} catch (error) {
+		logger.error(error);
+		return res
+			.status(statusCode.server_error.INTERNAL_SERVER_ERROR)
+			.json({ message: 'Server error' });
+	}
+};
+
 export default {
 	createUser,
 	readUser,
 	updateUser,
 	deleteUser,
-	signin
+	signin,
+	verify,
+	changePassword
 };

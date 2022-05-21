@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import { config } from './config/config';
 import logger from './library/logger';
 import route from './routes';
+import photoRoute from './routes/photo.route';
 
 const router = express();
 
@@ -44,6 +45,9 @@ const startServer = () => {
 	/** Config server */
 	router.use(express.urlencoded({ extended: true }));
 	router.use(express.json());
+
+	/** public routes */
+	router.use(photoRoute.name, photoRoute.router);
 
 	/** Security */
 	router.use((req, res, next) => {
