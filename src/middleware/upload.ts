@@ -17,7 +17,10 @@ const storage = new GridFsStorage({
 		const match = ['image/png', 'image/jpeg', 'image/jpg'];
 		if (!match.includes(file.mimetype)) {
 			logger.error(`File is not image ${file.mimetype}`);
-			return `editable_${Date.now()}`;
+			return {
+				bucketName: 'editable',
+				filename: `editable_${Date.now()}`
+			};
 		}
 		const fileName = `photos_${Date.now()}`;
 		const bucket = {

@@ -55,18 +55,14 @@ const getPhotos = async (req: Request, res: Response) => {
 
 const deletePhotos = async (req: Request, res: Response) => {
 	try {
-		const deleteResult = await gfs.files.deleteOne({
-			filename: req.params.filename
+		gfs.remove({ filename: req.params.filename }, () => {
+			logger.success(`Delete image ${req.params.filename}`);
+			return res.status(statusCode.success.OK).json({ message: 'OK' });
 		});
-		if (deleteResult.deletedCount === 0) {
-			logger.error(`Image ${req.params.filename} not found`);
-			return res
-				.status(statusCode.error.NOT_FOUND)
-				.json({ message: 'Image not found' });
-		}
-
-		logger.success(`Delete image ${req.params.filename}`);
-		return res.status(statusCode.success.OK).json({ message: 'OK' });
+		logger.error(`Image ${req.params.filename} not found`);
+		return res
+			.status(statusCode.error.NOT_FOUND)
+			.json({ message: 'Image not found' });
 	} catch (error) {
 		logger.error(`Image not found ${req.params.filename}`);
 		logger.error(error);

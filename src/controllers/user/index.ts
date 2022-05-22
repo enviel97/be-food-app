@@ -12,13 +12,14 @@ import provider from './user.provider';
 // Route create User
 const createUser = async (req: Request, res: Response) => {
 	const { name, birth, gender, password, email } = req.body;
+
 	let avatar: string = '';
 	if (!!req.file) {
 		const { bucketName, filename } = req.file;
 		avatar = `/${bucketName}/${filename}`;
 	}
 	try {
-		const User: IUser = {
+		const user: IUser = {
 			name: name,
 			birth: new Date(birth),
 			gender: (UserGender as any)[`${gender}`.toLowerCase()],
@@ -26,7 +27,7 @@ const createUser = async (req: Request, res: Response) => {
 			password: password,
 			avatar: avatar
 		};
-		const result = await provider.create!(User);
+		const result = await provider.create!(user);
 		return res.status(statusCode.success.CREATED).json({
 			_id: (result as any)._id.toHexString(),
 			name: result.name,
@@ -37,6 +38,11 @@ const createUser = async (req: Request, res: Response) => {
 		});
 	} catch (error) {
 		logger.error(error);
+		if (error instanceof Error && (error as any)?.code == 11000) {
+			return res
+				.status(statusCode.server_error.INTERNAL_SERVER_ERROR)
+				.json({ message: 'Duplicate email' });
+		}
 		return res
 			.status(statusCode.server_error.INTERNAL_SERVER_ERROR)
 			.json({ message: 'Server error' });
