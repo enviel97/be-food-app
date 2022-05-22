@@ -67,6 +67,9 @@ const startServer = () => {
 
 		// check api key
 		const key = req.headers['authenticate'] || req.query.apiKey;
+		console.log(key);
+		console.log(req.headers);
+		console.log(config.server.api);
 		if (!key || key === config.server.api) {
 			return res.status(401).json({ message: 'Invalid api key' });
 		}
