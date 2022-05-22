@@ -9,6 +9,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const config_1 = require("./config/config");
 const logger_1 = __importDefault(require("./library/logger"));
 const routes_1 = __importDefault(require("./routes"));
+const photo_route_1 = __importDefault(require("./routes/photo.route"));
 const router = (0, express_1.default)();
 mongoose_1.default
     .connect(config_1.config.mongo.url, { retryWrites: true, w: 'majority' })
@@ -31,6 +32,7 @@ const startServer = () => {
     });
     router.use(express_1.default.urlencoded({ extended: true }));
     router.use(express_1.default.json());
+    router.use(photo_route_1.default.name, photo_route_1.default.router);
     router.use((req, res, next) => {
         res.header('Access-Control-Allow-Origin', '*');
         res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');

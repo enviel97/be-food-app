@@ -48,7 +48,27 @@ const authProvider = {
             return user;
         }
         catch (error) {
-            throw (0, logger_helper_1.logError)({ message: 'Create user error', error });
+            throw (0, logger_helper_1.logError)({ message: 'Delete user error', error });
+        }
+    }),
+    findOne: (search) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const food = yield models_1.UserModel.findOne(search).lean();
+            return food;
+        }
+        catch (error) {
+            throw (0, logger_helper_1.logError)({ message: 'Get user error', error });
+        }
+    }),
+    updateByAttribute: (search, update) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const user = yield models_1.UserModel.findOneAndUpdate(search, update, {
+                new: true
+            }).lean();
+            return user;
+        }
+        catch (error) {
+            throw (0, logger_helper_1.logError)({ message: 'Change password user failure', error });
         }
     })
 };

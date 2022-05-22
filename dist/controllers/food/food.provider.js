@@ -78,7 +78,7 @@ const foodProvider = {
                         price: { $first: '$price' }
                     }
                 },
-                { $sort: { totalComment: 1 } }
+                { $sort: { totalComment: 1, createAt: -1, name: -1 } }
             ]).limit(6);
             const foods = yield models_1.FoodModel.populate(resultSort, {
                 path: 'comments',

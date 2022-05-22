@@ -47,8 +47,8 @@ var UserGender;
 const UserSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     avatar: { type: String, default: '' },
-    email: { type: String, required: true, immutable: true },
-    password: { type: String, required: true, select: false, immutable: true },
+    email: { type: String, required: true, immutable: true, unique: true },
+    password: { type: String, required: true, select: false },
     gender: { type: String, enum: UserGender, default: UserGender.female },
     birth: { type: Date, required: true }
 }, { timestamps: true });
@@ -60,6 +60,17 @@ UserSchema.pre('save', function (next) {
             user.password = hash;
         }
         return next();
+    });
+});
+UserSchema.pre('findOneAndUpdate', function (next) {
+    var _a;
+    return __awaiter(this, void 0, void 0, function* () {
+        const update = this.getUpdate();
+        const password = (_a = update['password']) !== null && _a !== void 0 ? _a : undefined;
+        if (!!password) {
+            const hash = yield bcrypt_1.default.hash(password);
+            this.setUpdate({ password: hash });
+        }
     });
 });
 exports.default = mongoose_1.default.model('User', UserSchema);
