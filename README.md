@@ -32,7 +32,60 @@ and coding skills, not for commercial purposes.
 - payment
 - history
 
---- This will update late ---
+#### Model rule
+
+- User:
+
+| field name   |   type   | rule                                                                                                  |
+| ------------ | :------: | :---------------------------------------------------------------------------------------------------- |
+| name         |  string  | not null                                                                                              |
+| password     |  string  | more than 8 character. At least 1 uppercase character, number, special symbol and lowercase character |
+| email        |  string  | email type, not null, unique                                                                          |
+| birth        | datetime | not null, selected date no later than today                                                           |
+| gender       |  string  | include [female, male, private], default is private                                                   |
+| avatar       |  string  |                                                                                                       |
+| updated date | datetime |                                                                                                       |
+
+- Comment
+
+| field name |   type   | rule                       |
+| ---------- | :------: | :------------------------- |
+| user       |   User   | not null                   |
+| comments   |  string  | not null                   |
+| datePost   | datetime | not null                   |
+| stars      |  double  | between 0 and 5, default 0 |
+
+- Food:
+
+| field name  |   type    | rule                                               |
+| ----------- | :-------: | :------------------------------------------------- |
+| name        |  string   | not null                                           |
+| images      | [string]  | not empty                                          |
+| comments    | [comment] |                                                    |
+| finalRate   |  double   | between 0 and 5, default 0                         |
+| timePrepare |    int    | more than 5                                        |
+| status      |  string   | include [normal, empty, little], default is normal |
+| description |  string   | not null                                           |
+| price       |  double   | not null                                           |
+
+- Food in cart: match with food model data
+
+| field name |   type   | rule                   |
+| ---------- | :------: | :--------------------- |
+| name       |  string  | not null               |
+| image      |  string  | not null               |
+| options    | [string] |                        |
+| price      |  double  | not null               |
+| quantity   |   int    | default 1, more than 1 |
+| time       |   int    | more than 5, defaul 5  |
+
+- Cart:
+
+| field name  |      type      | rule                                                              |
+| ----------- | :------------: | :---------------------------------------------------------------- |
+| create Date |    datetime    | default now                                                       |
+| foods       | [food in cart] | not empty                                                         |
+| status      |     string     | includes [accept, prepare, shipping, done, reject], defaul accept |
 
 ## Route:
 
