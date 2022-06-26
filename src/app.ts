@@ -3,7 +3,7 @@ import http from 'http';
 import mongoose from 'mongoose';
 import { config } from './config/config';
 import logger from './library/logger';
-import route from './routes';
+import * as routes from './routes';
 import photoRoute from './routes/photo.route';
 
 const router = express();
@@ -24,6 +24,7 @@ mongoose
 /**
  * Start database: Prevent start if have any problem to conect database
  */
+
 const startServer = () => {
 	router.use((req, res, next) => {
 		const { method, url, socket } = req;
@@ -75,7 +76,7 @@ const startServer = () => {
 	});
 
 	/** Routes */
-	route.forEach((injectValue) => {
+	Object.values(routes).forEach((injectValue) => {
 		logger.success(`Inject ${injectValue.name}`);
 		router.use(injectValue.name, injectValue.router);
 	});
