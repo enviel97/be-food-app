@@ -39,4 +39,5 @@ UserSchema.pre('findOneAndUpdate', async function (next) {
 		this.setUpdate({ password: hash });
 	}
 });
+
 export default mongoose.model<IUserModel>('User', UserSchema);

@@ -1,56 +1,14 @@
-import { DEFAULT } from '../../config/constant';
 import { logError } from '../../config/logger_helper';
-import Provider, { Pagination } from '../../config/provider';
+import Provider from '../../config/provider';
 import { FoodModel } from '../../models';
 import { IFood } from '../../models/foods/food.interface';
 
-let totalItem = -1;
-const foodProvider: Provider<IFood> & {
-	special1: () => Promise<Pagination<IFood>>;
-} = {
-	findAll: async (offset: number, limit: number) => {
-		try {
-			const [foods, total] = await Promise.all([
-				FoodModel.find().skip(offset).limit(limit).populate('comments').lean(),
-				totalItem < 0 ? FoodModel.count() : totalItem
-			]);
-			return { limit, offset, total, datas: foods };
-		} catch (error) {
-			throw logError({ message: 'Get foods error', error });
-		}
-	},
-	findByAttribute: async (search, options) => {
-		try {
-			const sort = options.sort ?? {};
-			const offset = options.offset ?? DEFAULT.OFFSET;
-			const limit = options.limit ?? DEFAULT.LIMIT;
-			const foods = await FoodModel.find(search)
-				.sort(sort)
-				.skip(offset)
-				.limit(limit)
-				.populate('comments')
-				.lean();
-			return { limit, offset, total: Math.min(foods.length, 10), datas: foods };
-		} catch (error) {
-			throw logError({ message: 'Get foods error', error });
-		}
-	},
-	findById: async (id: String) => {
-		try {
-			const user = await FoodModel.findById(id)
-				.populate({
-					path: 'comments',
-					populate: {
-						path: 'user'
-					}
-				})
-				.lean();
-			return user;
-		} catch (error) {
-			throw logError({ message: 'Get food error', error });
-		}
-	},
-	special1: async () => {
+class FoodProvider extends Provider<IFood> {
+	constructor() {
+		super(FoodModel);
+	}
+
+	public async get_top_6_food_review() {
 		try {
 			const resultSort = await FoodModel.aggregate([
 				{ $unwind: '$comments' },
@@ -84,6 +42,6 @@ const foodProvider: Provider<IFood> & {
 			throw logError({ message: 'Get food error', error });
 		}
 	}
-};
+}
 
-export default foodProvider;
+export default new FoodProvider();

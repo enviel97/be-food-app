@@ -24,7 +24,7 @@ const getPopularFood = async (req: Request, res: Response) => {
 
 const getCommon = async (req: Request, res: Response) => {
 	try {
-		const result = await provider.special1();
+		const result = await provider.get_top_6_food_review();
 		return res.status(statusCode.success.OK).json(result);
 	} catch (error) {
 		return res
