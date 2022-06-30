@@ -7,8 +7,7 @@ export const logError = (props: {
 	error: any;
 }) => {
 	const { message, error } = props;
-	const _error = new Error(message);
-	logger.error(_error.message);
-	error ?? logger.log(error);
-	return error;
+	logger.error(message);
+	error && logger.log(error);
+	return { message };
 };

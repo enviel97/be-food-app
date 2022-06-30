@@ -1,5 +1,6 @@
+import { DEFAULT } from '../../config/constant';
 import { logError } from '../../config/logger_helper';
-import Provider from '../../config/provider';
+import Provider, { Options, Pagination } from '../../config/provider';
 import { FoodModel } from '../../models';
 import { IFood } from '../../models/foods/food.interface';
 
@@ -40,6 +41,33 @@ class FoodProvider extends Provider<IFood> {
 			};
 		} catch (error) {
 			throw logError({ message: 'Get food error', error });
+		}
+	}
+
+	public async findByAttribute(
+		search: any,
+		options: Options
+	): Promise<Pagination<IFood>> {
+		try {
+			const sort = options.sort ?? {};
+			const offset = options.offset ?? DEFAULT.OFFSET;
+			const limit = options.limit ?? DEFAULT.LIMIT;
+			const datas = await this.model
+				.find(search)
+				.sort(sort)
+				.skip(offset)
+				.limit(limit)
+				.populate('comments')
+				.lean();
+
+			return {
+				limit,
+				offset,
+				total: Math.min(datas.length, 10),
+				datas: datas
+			};
+		} catch (error) {
+			throw logError({ message: `Get ${this.model.name} error`, error });
 		}
 	}
 }

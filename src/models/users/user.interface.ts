@@ -11,4 +11,5 @@ export interface IUser {
 	password: String;
 	gender: UserGender;
 	birth: Date;
+	address?: String;
 }

@@ -19,8 +19,10 @@ export interface Options {
 
 export default abstract class Provider<T = any> {
 	public readonly totalItem: number;
+	private name: String;
 	constructor(readonly model: Model<T & Document>) {
 		this.totalItem = -1;
+		this.name = model.modelName.toLocaleLowerCase();
 	}
 
 	public async findById(id: String): Promise<T | null> {
@@ -28,7 +30,7 @@ export default abstract class Provider<T = any> {
 			const result = await this.model.findById(id);
 			return result;
 		} catch (error) {
-			throw logError({ message: `Get ${this.model.name} error`, error });
+			throw logError({ message: `Get ${this.name} error`, error });
 		}
 	}
 
@@ -37,34 +39,33 @@ export default abstract class Provider<T = any> {
 			const result = await this.model.findOne(search).lean();
 			return result as T;
 		} catch (error) {
-			throw logError({ message: `Get ${this.model.name} error`, error });
+			throw logError({ message: `Get ${this.name} error`, error });
 		}
 	}
 
 	public async findByAttribute(
 		search: any,
-		options: Options
+		options: Options = {}
 	): Promise<Pagination<T>> {
 		try {
 			const sort = options.sort ?? {};
 			const offset = options.offset ?? DEFAULT.OFFSET;
 			const limit = options.limit ?? DEFAULT.LIMIT;
-			const foods = await this.model
+			const datas = await this.model
 				.find(search)
 				.sort(sort)
 				.skip(offset)
 				.limit(limit)
-				.populate('comments')
 				.lean();
 
 			return {
 				limit,
 				offset,
-				total: Math.min(foods.length, 10),
-				datas: foods as T[]
+				total: datas.length,
+				datas: datas as T[]
 			};
 		} catch (error) {
-			throw logError({ message: 'Get foods error', error });
+			throw logError({ message: `Get ${this.name} error`, error });
 		}
 	}
 
@@ -76,7 +77,7 @@ export default abstract class Provider<T = any> {
 			]);
 			return { limit, offset, total, datas: datas as T[] };
 		} catch (error) {
-			throw logError({ message: `Get ${this.model.name} error`, error });
+			throw logError({ message: `Get ${this.name} error`, error });
 		}
 	}
 
@@ -87,7 +88,7 @@ export default abstract class Provider<T = any> {
 			const result = await _schema.save();
 			return result as T;
 		} catch (error) {
-			throw logError({ message: `Create ${this.model.name} error`, error });
+			throw logError({ message: `Create ${this.name} error`, error });
 		}
 	}
 
@@ -98,7 +99,10 @@ export default abstract class Provider<T = any> {
 			});
 			return result;
 		} catch (error) {
-			throw logError({ message: `Create ${this.model.name} error`, error });
+			throw logError({
+				message: `Update ${this.name} error`,
+				error
+			});
 		}
 	}
 
@@ -112,7 +116,7 @@ export default abstract class Provider<T = any> {
 			return result as T;
 		} catch (error) {
 			throw logError({
-				message: `Change info of ${this.model.name} failure`,
+				message: `Change info of ${this.name} failure`,
 				error
 			});
 		}
@@ -123,7 +127,7 @@ export default abstract class Provider<T = any> {
 			const result = await this.model.findByIdAndDelete(id);
 			return result;
 		} catch (error) {
-			throw logError({ message: `Delete ${this.model.name} error`, error });
+			throw logError({ message: `Delete ${this.name} error`, error });
 		}
 	}
 }
