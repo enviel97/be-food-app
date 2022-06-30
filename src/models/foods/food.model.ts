@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 import { FoodStatus, IFood } from './food.interface';
 
 export interface IFoodModel extends IFood, Document {}

@@ -17,7 +17,8 @@ const UserSchema: Schema = new Schema(
 		email: { type: String, required: true, immutable: true, unique: true },
 		password: { type: String, required: true, select: false },
 		gender: { type: String, enum: UserGender, default: UserGender.female },
-		birth: { type: Date, required: true }
+		birth: { type: Date, required: true },
+		address: { type: String, default: '', ref: 'Address' }
 	},
 	{ timestamps: true }
 );
@@ -39,4 +40,5 @@ UserSchema.pre('findOneAndUpdate', async function (next) {
 		this.setUpdate({ password: hash });
 	}
 });
+
 export default mongoose.model<IUserModel>('User', UserSchema);
